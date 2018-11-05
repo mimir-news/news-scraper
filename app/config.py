@@ -1,5 +1,6 @@
 # Standard library
 import os
+import logging
 
 
 NUM_WORKERS: int = 5
@@ -21,3 +22,24 @@ class MQConfig:
 class HeartbeetConfig:
     FILE: int = int(os.environ['HEARTBEAT_FILE'])
     INTERVAL: int = os.environ['HEARTBEAT_INTERVAL']
+
+
+LOGGING_CONIFG = {
+    'version': 1,
+    'formatters': {
+        'default': {
+            'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        }
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'default',
+            'level': logging.INFO
+        }
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': logging.DEBUG
+    }
+}
