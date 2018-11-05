@@ -6,13 +6,16 @@ NUM_WORKERS: int = 5
 
 
 class MQConfig:
-    HOST: str = os.environ['MQ_HOST']
-    PORT: str = os.environ['MQ_PORT']
-    USER: str = os.environ['MQ_USER']
-    PASSWORD: str = os.environ['MQ_PASSWORD']
     EXCHANGE: str = os.environ['MQ_EXCHANGE']
     SCRAPE_QUEUE: str = os.environ['MQ_SCRAPE_QUEUE']
     SCRAPED_QUEUE: str = os.environ['MQ_SCRAPED_QUEUE']
+    _host: str = os.environ['MQ_HOST']
+    _port: str = os.environ['MQ_PORT']
+    _user: str = os.environ['MQ_USER']
+    _password: str = os.environ['MQ_PASSWORD']
+
+    def URI(self) -> str:
+        return f'amqp://{self._user}:{self._password}@{self._host}:{self._port}/'
 
 
 class HeartbeetConfig:
