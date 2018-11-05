@@ -1,0 +1,50 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: news-scraper
+  labels:
+    app: news-scraper
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: news-scraper
+    spec:
+      containers:
+        - name: news-scraper
+          image: eu.gcr.io/mimir-185212/news-scraper:0.1.0
+          env:
+            - name: MQ_EXCHANGE
+              value: x-news
+            - name: MQ_SCRAPE_QUEUE
+              value: q-scrape-targets
+            - name: MQ_SCRAPED_QUEUE
+              value: q-scraped-articles
+            - name: MQ_HOST
+              value: message-queue
+            - name: MQ_PORT
+              value: "5672"
+            - name: MQ_USER
+              value: newsscraper
+            - name: MQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mq-credentials
+                  key: newsscraper.password
+            - name: HEARTBEAT_FILE
+              value: "/tmp/news-scraper-health.txt"
+            - name: HEARTBEAT_INTERVAL
+              value: "20"
+          readinessProbe:
+            exec:
+              command:
+                - test
+                - '`find /tmp/news-scraper-health.txt -mmin 1`'
+            initialDelaySeconds: 40
+          livenessProbe:
+            exec:
+              command:
+                - test
+                - '`find /tmp/news-scraper-health.txt -mmin 1`'
+            initialDelaySeconds: 60
