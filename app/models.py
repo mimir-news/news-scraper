@@ -1,6 +1,6 @@
 # Standard library
 import json
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod, abstractstaticmethod
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any, Dict, List, Optional
@@ -16,8 +16,8 @@ class DTO(metaclass=ABCMeta):
     def asdict(self) -> Dict[str, Any]:
         """Retruns a dictionary representation of an object."""
 
-    @abstractmethod
-    def fromdict(self, raw: Dict[str, Any]) -> 'DTO':
+    @abstractstaticmethod
+    def fromdict(raw: Dict[str, Any]) -> 'DTO':
         """Turns a dictionary into an object of the DTO implementation."""
 
 
