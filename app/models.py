@@ -1,8 +1,10 @@
 # Standard library
+import json
+from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, List, Dict
-from abc import ABCMeta, abstractmethod
+from typing import Any, Dict, List, Optional
+from uuid import uuid4
 
 
 class DTO(metaclass=ABCMeta):
@@ -38,12 +40,15 @@ class Subject(DTO):
 
     @staticmethod
     def fromdict(raw: Dict[str, Any]) -> 'Subject':
-        return Subject(
-            id=raw['id'],
-            symbol=raw['symbol'],
-            name=raw['name'],
-            score=raw['score'],
-            article_id=raw['articleId'])
+        try:
+            return Subject(
+                id=raw['id'],
+                symbol=raw['symbol'],
+                name=raw['name'],
+                score=raw['score'],
+                article_id=raw['articleId'])
+        except KeyError as e:
+            raise wrap_key_error(e)
 
 
 @dataclass(frozen=True)
@@ -63,11 +68,14 @@ class Referer(DTO):
 
     @staticmethod
     def fromdict(raw: Dict[str, Any]) -> 'Referer':
-        return Referer(
-            id=raw['id'],
-            external_id=raw['externalId'],
-            follower_count=raw['followerCount'],
-            article_id=raw['articleId'])
+        try:
+            return Referer(
+                id=raw['id'],
+                external_id=raw['externalId'],
+                follower_count=raw['followerCount'],
+                article_id=raw['articleId'])
+        except KeyError as e:
+            raise wrap_key_error(e)
 
 
 @dataclass(frozen=True)
@@ -91,13 +99,16 @@ class Article(DTO):
 
     @staticmethod
     def fromdict(raw: Dict[str, Any]) -> 'Article':
-        return Article(
-            id=raw['id'],
-            url=raw['url'],
-            title=raw['title'],
-            body=raw['body'],
-            keywords=raw['keywords'],
-            article_date=raw['articleDate'])
+        try:
+            return Article(
+                id=raw['id'],
+                url=raw['url'],
+                title=raw['title'],
+                body=raw['body'],
+                keywords=raw['keywords'],
+                article_date=raw['articleDate'])
+        except KeyError as e:
+            raise wrap_key_error(e)
 
 
 @dataclass
@@ -121,13 +132,16 @@ class ScrapeTarget:
 
     @staticmethod
     def fromdict(raw: Dict[str, Any]) -> 'ScrapeTarget':
-        return ScrapeTarget(
-            url=raw['url'],
-            subjects=[Subject.fromdict(sub) for sub in raw['subjects']],
-            referer=Referer.fromdict(raw['referer']),
-            title=raw['title'],
-            body=raw['body'],
-            article_id=raw['articleId'])
+        try:
+            return ScrapeTarget(
+                url=raw['url'],
+                subjects=[Subject.fromdict(sub) for sub in raw['subjects']],
+                referer=Referer.fromdict(raw['referer']),
+                title=raw['title'],
+                body=raw['body'],
+                article_id=raw['articleId'])
+        except KeyError as e:
+            raise wrap_key_error(e)
 
 
 @dataclass
@@ -145,7 +159,18 @@ class ScrapedArticle:
 
     @staticmethod
     def fromdict(raw: Dict[str, Any]) -> 'ScrapedArticle':
-        return ScrapedArticle(
-            article=Article.fromdict(raw['article']),
-            subjects=[Subject.fromdict(sub) for sub in raw['subjects']],
-            referer=Referer.fromdict(raw['referer']))
+        try:
+            return ScrapedArticle(
+                article=Article.fromdict(raw['article']),
+                subjects=[Subject.fromdict(sub) for sub in raw['subjects']],
+                referer=Referer.fromdict(raw['referer']))
+        except KeyError as e:
+            raise wrap_key_error(e)
+
+
+def wrap_key_error(error: KeyError) -> ValueError:
+    error_message = json.dumps({
+        'id': str(uuid4()),
+        'message': str(error)
+    })
+    return ValueError(error_message)
