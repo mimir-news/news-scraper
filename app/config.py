@@ -1,6 +1,7 @@
 # Standard library
 import os
 import logging
+from logging.config import dictConfig
 
 
 NUM_WORKERS: int = 5
@@ -43,3 +44,5 @@ LOGGING_CONIFG = {
         'level': logging.DEBUG
     }
 }
+
+dictConfig(LOGGING_CONIFG)

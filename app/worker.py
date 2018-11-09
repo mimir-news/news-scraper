@@ -1,11 +1,14 @@
 # Standard library
+import json
 import logging
 from concurrent.futures import ThreadPoolExecutor
+from uuid import uuid4
 
 # Internal modules
 from app.models import ScrapeTarget, ScrapedArticle
 from app.service import MQClient, MQDeliver, MessageHandler
 from app.service import ScrapingService, ScoringService
+from app.util import wrap_error_message
 
 
 class Worker(MessageHandler):
@@ -26,7 +29,7 @@ class Worker(MessageHandler):
             self._mq_client.send(scraped_article)
             self._mq_client.ack(mq_method)
         except Exception as e:
-            self._log.error(str(e))
+            self._log.error(wrap_error_message(e))
             self._mq_client.reject(mq_method)
 
     def _scrape_and_rank(self, target: ScrapeTarget) -> ScrapedArticle:

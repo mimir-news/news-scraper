@@ -6,6 +6,9 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 from uuid import uuid4
 
+# Internal modules
+from app.util import wrap_error_message
+
 
 class DTO(metaclass=ABCMeta):
     """DTO is the abtract baseclass of classes that can 
@@ -169,8 +172,4 @@ class ScrapedArticle:
 
 
 def wrap_key_error(error: KeyError) -> ValueError:
-    error_message = json.dumps({
-        'id': str(uuid4()),
-        'message': str(error)
-    })
-    return ValueError(error_message)
+    return ValueError(wrap_error_message(error))

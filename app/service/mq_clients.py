@@ -29,26 +29,22 @@ class MQClient:
 
     _log = logging.getLogger('MQClient')
 
-    def __init__(self,
-                 config: MQConfig,
-                 send_channel: MQChannel,
-                 ack_channel: MQChannel) -> None:
+    def __init__(self, config: MQConfig, channel: MQChannel) -> None:
         self.CONFIG = config
-        self._send_chan = send_channel
-        self._ack_chan = ack_channel
+        self._channel = channel
 
     def send(self, scraped_article: ScrapedArticle) -> None:
-        self._send_chan.basic_publish(
+        self._channel.basic_publish(
             exchange=self.CONFIG.EXCHANGE,
             routing_key=self.CONFIG.SCRAPED_QUEUE,
             body=json.dumps(scraped_article.asdict())
         )
 
-    def ack(self, method: MQDeliver) -> None:
-        self._ack_chan.basic_ack(delivery_tag=method.delivery_tag)
+    def ack(self, channel: MQChannel, method: MQDeliver) -> None:
+        channel.basic_ack(delivery_tag=method.delivery_tag)
 
-    def reject(self, method: MQDeliver) -> None:
-        self._ack_chan.basic_reject(delivery_tag=method.delivery_tag)
+    def reject(self, channel: MQChannel, method: MQDeliver) -> None:
+        channel.basic_reject(delivery_tag=method.delivery_tag)
 
 
 class MQConsumer:
