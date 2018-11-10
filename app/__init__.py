@@ -7,7 +7,7 @@ import pika
 # Internal modules
 from app.config import MQConfig  # Import first to setup logging config.
 from app.worker import Worker
-from app.service import ScoringService, ScoringService
+from app.service import ScrapingService, ScoringService
 from app.service import MQConsumer, MQClient
 
 
@@ -18,7 +18,7 @@ _config = MQConfig()
 mq_conn = pika.BlockingConnection(pika.URLParameters(_config.URI()))
 channel = mq_conn.channel()
 
-_scraper = ScoringService()
+_scraper = ScrapingService()
 _scorer = ScoringService()
 _mq_client = MQClient(_config, channel)
 

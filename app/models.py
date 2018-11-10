@@ -20,7 +20,7 @@ class DTO(metaclass=ABCMeta):
         """Retruns a dictionary representation of an object."""
 
     @abstractstaticmethod
-    def fromdict(raw: Dict[str, Any]) -> 'DTO':
+    def fromdict(self, raw: Dict[str, Any]) -> 'DTO':
         """Turns a dictionary into an object of the DTO implementation."""
 
 

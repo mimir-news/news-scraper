@@ -20,9 +20,9 @@ class MQConfig:
         return f'amqp://{self._user}:{self._password}@{self._host}:{self._port}/'
 
 
-class HeartbeetConfig:
-    FILE: int = int(os.environ['HEARTBEAT_FILE'])
-    INTERVAL: int = os.environ['HEARTBEAT_INTERVAL']
+class HeartbeatConfig:
+    FILE: str = os.environ['HEARTBEAT_FILE']
+    INTERVAL: int = int(os.environ['HEARTBEAT_INTERVAL'])
 
 
 LOGGING_CONIFG = {

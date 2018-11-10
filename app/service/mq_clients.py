@@ -6,22 +6,22 @@ from concurrent.futures import ThreadPoolExecutor
 
 # 3rd party modules
 import pika
+from pika.channel import Channel
+from pika.spec import Basic as MQ
+from pika.amqp_object import Properties as MQProperties
 
 # Internal modules
 from app.config import MQConfig, NUM_WORKERS
 from app.models import ScrapedArticle, ScrapeTarget
 
-# Types
-MQChannel = pika.adapters.blocking_connection.BlockingChannel
-MQConnection = pika.BlockingConnection
-MQDeliver = pika.spec.Basic.Deliver
-MQProperties = pika.amqp_object.Properties
-
 
 class MessageHandler(metaclass=ABCMeta):
 
     @abstractmethod
-    def handle_scrape_target(self, target: ScrapeTarget, mq_method: MQDeliver) -> None:
+    def handle_scrape_target(self,
+                             target: ScrapeTarget,
+                             channel: Channel,
+                             mq_method: MQ.Deliver) -> None:
         pass
 
 
@@ -29,7 +29,7 @@ class MQClient:
 
     _log = logging.getLogger('MQClient')
 
-    def __init__(self, config: MQConfig, channel: MQChannel) -> None:
+    def __init__(self, config: MQConfig, channel: Channel) -> None:
         self.CONFIG = config
         self._channel = channel
 
@@ -40,11 +40,13 @@ class MQClient:
             body=json.dumps(scraped_article.asdict())
         )
 
-    def ack(self, channel: MQChannel, method: MQDeliver) -> None:
+    def ack(self, channel: Channel, method: MQ.Deliver) -> None:
         channel.basic_ack(delivery_tag=method.delivery_tag)
 
-    def reject(self, channel: MQChannel, method: MQDeliver) -> None:
-        channel.basic_reject(delivery_tag=method.delivery_tag)
+    def reject(self, channel: Channel, method: MQ.Deliver) -> None:
+        channel.basic_reject(
+            delivery_tag=method.delivery_tag,
+            requeue=False)
 
 
 class MQConsumer:
@@ -53,7 +55,7 @@ class MQConsumer:
 
     def __init__(self,
                  config: MQConfig,
-                 channel: MQChannel,
+                 channel: Channel,
                  handler: MessageHandler) -> None:
         self.CONFIG = config
         self._channel = channel
@@ -62,20 +64,22 @@ class MQConsumer:
 
     def start(self) -> None:
         self._channel.basic_qos(prefetch_count=1)
-        self._channel.basic_consume()
+        self._channel.basic_consume(
+            self._handle_message,
+            self.CONFIG.SCRAPE_QUEUE)
         self._channel.start_consuming()
 
     def _handle_message(self,
-                        channel: MQChannel,
-                        method: MQDeliver,
+                        channel: Channel,
+                        method: MQ.Deliver,
                         properties: MQProperties,
                         body: bytes) -> None:
         try:
             scrape_target = ScrapeTarget.fromdict(json.loads(body))
-            self._handler.handle_scrape_target(scrape_target, method)
+            self._handler.handle_scrape_target(scrape_target, channel, method)
         except ValueError as e:
             self._log.info(str(e))
             self._reject_message(method)
 
-    def _reject_message(self, method: MQDeliver) -> None:
+    def _reject_message(self, method: MQ.Deliver) -> None:
         self._channel.basic_reject(delivery_tag=method.delivery_tag)

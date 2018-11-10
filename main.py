@@ -3,6 +3,8 @@ import logging
 
 # Internal modules
 from app import app, teardown_application
+from app.config import HeartbeatConfig
+from app.service import emit_heartbeat
 
 
 log = logging.getLogger(__file__)
@@ -10,6 +12,7 @@ log = logging.getLogger(__file__)
 
 def main() -> None:
     try:
+        emit_heartbeat()
         app.start()
     except Exception as e:
         log.error(f'Application stopped: {str(e)}')
