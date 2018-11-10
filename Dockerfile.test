@@ -12,3 +12,4 @@ RUN pip install --no-cache-dir -r requirements-test.txt
 
 # Test command.
 CMD ["mypy", "--ignore-missing-imports", "main.py"]
+
