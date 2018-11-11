@@ -37,7 +37,7 @@ class MQClient:
         self._channel.basic_publish(
             exchange=self.CONFIG.EXCHANGE,
             routing_key=self.CONFIG.SCRAPED_QUEUE,
-            body=json.dumps(scraped_article.asdict())
+            body=json.dumps(scraped_article.asdict(), indent=4, sort_keys=True)
         )
 
     def ack(self, channel: Channel, method: MQ.Deliver) -> None:
@@ -76,6 +76,9 @@ class MQConsumer:
                         body: bytes) -> None:
         try:
             scrape_target = ScrapeTarget.fromdict(json.loads(body))
+            self._log.info(
+                f'Handling ScrapeTarget with url={scrape_target.url} '
+                f'article_id={scrape_target.article_id}')
             self._handler.handle_scrape_target(scrape_target, channel, method)
         except ValueError as e:
             self._log.info(str(e))

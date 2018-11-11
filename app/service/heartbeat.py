@@ -7,7 +7,7 @@ from threading import Thread
 from app.config import HeartbeatConfig
 
 
-def emit_heartbeat() -> None:
+def emit_heartbeats() -> None:
     """Sets up and runs heartbeat emissions in a background tread."""
     config = HeartbeatConfig()
     t = Thread(

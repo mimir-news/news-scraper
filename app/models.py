@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional
 from uuid import uuid4
 
 # Internal modules
-from app.util import wrap_error_message
+from app.util import wrap_error_message, date_to_str, str_to_date
 
 
 class DTO(metaclass=ABCMeta):
@@ -97,7 +97,7 @@ class Article(DTO):
             'title': self.title,
             'body': self.body,
             'keywords': self.keywords,
-            'articleDate': self.article_date
+            'articleDate': date_to_str(self.article_date)
         }
 
     @staticmethod
@@ -109,7 +109,7 @@ class Article(DTO):
                 title=raw['title'],
                 body=raw['body'],
                 keywords=raw['keywords'],
-                article_date=raw['articleDate'])
+                article_date=str_to_date(raw['articleDate']))
         except KeyError as e:
             raise wrap_key_error(e)
 

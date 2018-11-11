@@ -5,6 +5,7 @@ from logging.config import dictConfig
 
 
 NUM_WORKERS: int = 5
+DATE_FORMAT: str = '%Y-%m-%d %H:%M:%S'
 
 
 class MQConfig:
