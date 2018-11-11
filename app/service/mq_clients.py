@@ -79,7 +79,9 @@ class MQConsumer:
             self._log.info(
                 f'Handling ScrapeTarget with url={scrape_target.url} '
                 f'article_id={scrape_target.article_id}')
-            self._handler.handle_scrape_target(scrape_target, channel, method)
+            self._executor.submit(
+                self._handler.handle_scrape_target,
+                scrape_target, channel, method)
         except ValueError as e:
             self._log.info(str(e))
             self._reject_message(method)
