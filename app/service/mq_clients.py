@@ -22,7 +22,12 @@ class MessageHandler(metaclass=ABCMeta):
                              target: ScrapeTarget,
                              channel: Channel,
                              mq_method: MQ.Deliver) -> None:
-        pass
+        """Handles scraping and ranking of an incomming scrape target.
+
+        :param target: ScrapeTarget to handle.
+        :param channel: MQ channel to ack or reject the message.
+        :param mq_method: MQ metadata about the message.
+        """
 
 
 class MQClient:

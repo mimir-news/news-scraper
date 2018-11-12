@@ -19,10 +19,11 @@ class ScrapingService:
         article.parse()
         article.nlp()
 
+        article_date = article.publish_date or datetime.utcnow()
         return Article(
             id=target.article_id,
             url=target.url,
             title=article.title,
             body=article.text,
             keywords=article.keywords,
-            article_date=article.publish_date)
+            article_date=article_date)

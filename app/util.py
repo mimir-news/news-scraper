@@ -23,14 +23,13 @@ def wrap_error_message(error: Exception, id: Optional[str] = None) -> str:
     })
 
 
-def date_to_str(date: Optional[datetime]) -> str:
+def date_to_str(date: datetime) -> str:
     """Formats a date as a string.
 
     :param date: Datetime to format.
     :return: String
     """
-    selected_date = date or datetime.utcnow()
-    return selected_date.strftime(DATE_FORMAT)
+    return date.strftime(DATE_FORMAT)
 
 
 def str_to_date(date_str: str) -> datetime:
