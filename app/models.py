@@ -32,6 +32,13 @@ class Subject(DTO):
     score: float
     article_id: str
 
+    def describe(self) -> str:
+        """Creats a string describing the subject that can be ranked against.
+
+        :return: String describing the subject.
+        """
+        return f'{self.symbol} {self.name}'
+
     def asdict(self) -> Dict[str, Any]:
         return {
             'id': self.id,
@@ -99,6 +106,13 @@ class Article(DTO):
             'keywords': self.keywords,
             'articleDate': date_to_str(self.article_date)
         }
+
+    def describe(self) -> str:
+        """Creates a string describing the article that can be ranked against.
+
+        :return: String describing the article.
+        """
+        return f'{self.title} {self.body} {self.keywords}'
 
     @staticmethod
     def fromdict(raw: Dict[str, Any]) -> 'Article':
