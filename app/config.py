@@ -9,6 +9,7 @@ DATE_FORMAT: str = '%Y-%m-%d %H:%M:%S'
 
 
 class MQConfig:
+    TEST_MODE: bool = os.getenv('RELEASE_MODE') == 'TEST'
     EXCHANGE: str = os.environ['MQ_EXCHANGE']
     SCRAPE_QUEUE: str = os.environ['MQ_SCRAPE_QUEUE']
     SCRAPED_QUEUE: str = os.environ['MQ_SCRAPED_QUEUE']
