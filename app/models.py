@@ -95,7 +95,7 @@ class Article(DTO):
     title: str
     body: str
     keywords: List[str]
-    article_date: datetime
+    date: datetime
 
     def asdict(self) -> Dict[str, Any]:
         return {
@@ -104,7 +104,7 @@ class Article(DTO):
             'title': self.title,
             'body': self.body,
             'keywords': self.keywords,
-            'articleDate': date_to_str(self.article_date)
+            'articleDate': date_to_str(self.date)
         }
 
     def describe(self) -> str:
@@ -112,7 +112,8 @@ class Article(DTO):
 
         :return: String describing the article.
         """
-        return f'{self.title} {self.body} {self.keywords}'
+        joined_keywords = " ".join(self.keywords)
+        return f'{self.title} {self.body} {joined_keywords}'
 
     @staticmethod
     def fromdict(raw: Dict[str, Any]) -> 'Article':
@@ -123,7 +124,7 @@ class Article(DTO):
                 title=raw['title'],
                 body=raw['body'],
                 keywords=raw['keywords'],
-                article_date=str_to_date(raw['articleDate']))
+                date=str_to_date(raw['articleDate']))
         except KeyError as e:
             raise wrap_key_error(e)
 

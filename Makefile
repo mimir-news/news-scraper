@@ -16,10 +16,13 @@ run:
 	python main.py
 
 test:
-	mypy --ignore-missing-imports main.py
+	sh run-tests.sh
 
 install:
 	pip install -r requirements.txt
+
+install-test:
+	pip install -r test-requirements.txt
 
 build:
 	docker build -t $(IMAGE) .

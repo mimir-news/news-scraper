@@ -13,6 +13,7 @@ RUN apt-get update && apt-get upgrade -y && \
 WORKDIR /opt/app
 COPY . .
 RUN rm *test*
+RUN rm -rf tests
 
 # Install requirements.
 RUN pip install --no-cache-dir -r requirements.txt

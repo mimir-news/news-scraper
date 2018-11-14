@@ -8,8 +8,8 @@ COPY . .
 
 # Install requirements.
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir -r requirements-test.txt
+RUN pip install --no-cache-dir -r test-requirements.txt
 
 # Test command.
-CMD ["mypy", "--ignore-missing-imports", "main.py"]
+CMD ["sh", "run-tests.sh"]
 

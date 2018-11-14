@@ -26,4 +26,4 @@ class ScrapingService:
             title=article.title,
             body=article.text,
             keywords=article.keywords,
-            article_date=article_date)
+            date=article_date)
