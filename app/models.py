@@ -11,7 +11,7 @@ from app.util import wrap_error_message, date_to_str, str_to_date
 
 
 class DTO(metaclass=ABCMeta):
-    """DTO is the abtract baseclass of classes that can 
+    """DTO is the abtract baseclass of classes that can
     turn themselves from an into a dict.
     """
 
@@ -97,6 +97,13 @@ class Article(DTO):
     keywords: List[str]
     date: datetime
 
+    def describe(self) -> str:
+        """Creates a string describing the article that can be ranked against.
+
+        :return: String describing the article.
+        """
+        return f'{self.title} {self.body}'
+
     def asdict(self) -> Dict[str, Any]:
         return {
             'id': self.id,
@@ -106,14 +113,6 @@ class Article(DTO):
             'keywords': self.keywords,
             'articleDate': date_to_str(self.date)
         }
-
-    def describe(self) -> str:
-        """Creates a string describing the article that can be ranked against.
-
-        :return: String describing the article.
-        """
-        joined_keywords = " ".join(self.keywords)
-        return f'{self.title} {self.body} {joined_keywords}'
 
     @staticmethod
     def fromdict(raw: Dict[str, Any]) -> 'Article':
@@ -129,14 +128,38 @@ class Article(DTO):
             raise wrap_key_error(e)
 
 
-@dataclass
+@dataclass(frozen=True)
 class ScrapeTarget:
     url: str
     subjects: List[Subject]
     referer: Referer
-    title: str
-    body: str
+    title: Optional[str]
+    body: Optional[str]
     article_id: str
+
+    def is_scraped(self) -> bool:
+        """Checks is the scrape target title and body is already set.
+
+        :return: Boolean indicating that the target has been scraped.
+        """
+        title_set: bool = self.title not in ['', None]
+        body_set: bool = self.body not in ['', None]
+        return title_set and body_set
+
+    def article(self) -> Article:
+        """Converts a scrape target to an article.
+
+        :return: Article
+        """
+        if not self.is_scraped():
+            raise new_value_error(f'Scrape target {self.asdict()} is not set')
+        return Article(
+            id=self.article_id,
+            url=self.url,
+            title=str(self.title),
+            body=str(self.body),
+            keywords=[],
+            date=datetime.utcnow())
 
     def asdict(self) -> Dict[str, Any]:
         return {
@@ -162,7 +185,7 @@ class ScrapeTarget:
             raise wrap_key_error(e)
 
 
-@dataclass
+@dataclass(frozen=True)
 class ScrapedArticle:
     article: Article
     subjects: List[Subject]
@@ -188,3 +211,7 @@ class ScrapedArticle:
 
 def wrap_key_error(error: KeyError) -> ValueError:
     return ValueError(wrap_error_message(error))
+
+
+def new_value_error(message: str) -> ValueError:
+    return ValueError(wrap_error_message(Exception(message)))
