@@ -6,14 +6,13 @@ RUN apt-get update && apt-get upgrade -y && \
     libxml2-dev \
     libxslt-dev \
     libjpeg-dev \
-    zlib1g-dev \
-    libpng12-dev
+    zlib1g-dev 
 
 # Copy app source.
 WORKDIR /opt/app
 COPY . .
-RUN rm *test*
 RUN rm -rf tests
+RUN rm *test*
 
 # Install requirements.
 RUN pip install --no-cache-dir -r requirements.txt

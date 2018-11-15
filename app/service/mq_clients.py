@@ -98,7 +98,8 @@ class MQConsumer:
 class MQConnectionFactory:
 
     def __init__(self, config: MQConfig) -> None:
-        if not config.TEST_MODE:
+        self.TEST_MODE = config.TEST_MODE
+        if not self.TEST_MODE:
             connection_params = pika.URLParameters(config.URI())
             self._conn = pika.BlockingConnection(connection_params)
             self._channel = self._conn.channel()
@@ -107,8 +108,9 @@ class MQConnectionFactory:
             self._channel = None
 
     def __del__(self) -> None:
-        self._channel.close()
-        self._conn.close()
+        if not self.TEST_MODE:
+            self._channel.close()
+            self._conn.close()
 
     def get_channel(self) -> Channel:
         return self._channel
