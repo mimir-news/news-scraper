@@ -14,6 +14,8 @@ class ScrapingService:
     _log = logging.getLogger('ScrapingService')
 
     def get_article(self, target: ScrapeTarget) -> Article:
+        if target.is_scraped():
+            return target.article()
         article = newspaper.Article(target.url)
         article.download()
         article.parse()

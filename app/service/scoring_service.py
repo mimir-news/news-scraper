@@ -22,7 +22,7 @@ class ScoringService:
 
     def __init__(self) -> None:
         _corpus_reader = CorpusReader()
-        self.CORPUS = _corpus_reader.create()
+        self.CORPUS = _corpus_reader.read()
         self.STOPWORDS = _corpus_reader.get_stopwords()
         self._log.info("Corpus and stopwords successfully loaded.")
 
@@ -72,7 +72,7 @@ class CorpusReader:
 
     CATEGORIES = ['news', 'editorial']
 
-    def create(self) -> List[str]:
+    def read(self) -> List[str]:
         """Parses and formats text corpus.
 
         :return: List of strings each representing a document.
@@ -113,7 +113,7 @@ def flatten_lists(base_list: List[List]) -> List:
     :param base_list: List of lists.
     :return: Flattened list.
     """
-    return list(itertools.chain(base_list))
+    return list(itertools.chain.from_iterable(base_list))
 
 
 def join_strings(words: List[str]) -> str:
