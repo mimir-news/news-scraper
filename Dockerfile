@@ -11,7 +11,7 @@ RUN apt-get update && apt-get upgrade -y && \
 # Copy app source.
 WORKDIR /opt/app
 COPY . .
-RUN rm -rf tests
+RUN rm -rf tests testdata
 RUN rm *test*
 
 # Install requirements.
