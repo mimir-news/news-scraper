@@ -15,8 +15,8 @@ _log = logging.getLogger(__name__)
 
 
 _config = MQConfig()
-_factory = MQConnectionFactory(_config)
-channel = _factory.get_channel()
+connection_factory = MQConnectionFactory(_config)
+channel = connection_factory.get_channel()
 
 _scraper = ScrapingService()
 _scorer = ScoringService()

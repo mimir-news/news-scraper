@@ -95,7 +95,17 @@ class MQConsumer:
         self._channel.basic_reject(delivery_tag=method.delivery_tag)
 
 
-class MQConnectionFactory:
+class MQConnectionChecker(metaclass=ABCMeta):
+
+    def is_connected(self) -> bool:
+        """Returns a boolea inidcating if the underlying MQ connenction is open.
+
+        :return: Boolean
+        """
+        raise NotImplementedError()
+
+
+class MQConnectionFactory(MQConnectionChecker):
 
     def __init__(self, config: MQConfig) -> None:
         self.TEST_MODE = config.TEST_MODE
@@ -114,3 +124,6 @@ class MQConnectionFactory:
 
     def get_channel(self) -> Channel:
         return self._channel
+
+    def is_connected(self) -> bool:
+        return self._conn.is_open()
