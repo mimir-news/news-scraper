@@ -4,7 +4,6 @@ import logging
 # Internal modules
 from app import app
 from app import connection_factory
-from app.config import HeartbeatConfig
 from app.service import emit_heartbeats
 
 

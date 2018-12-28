@@ -21,6 +21,8 @@ spec:
               value: q-scrape-targets
             - name: MQ_SCRAPED_QUEUE
               value: q-scraped-articles
+            - name: MQ_HEALTH_TARGET
+              value: q-health-newsscraper
             - name: MQ_HOST
               value: message-queue
             - name: MQ_PORT

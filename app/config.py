@@ -22,8 +22,9 @@ class MQConfig:
         return f'amqp://{self._user}:{self._password}@{self._host}:{self._port}/'
 
 
-class HeartbeatConfig:
-    FILE: str = os.environ['HEARTBEAT_FILE']
+class HealthCheckConfig:
+    MQ_HEALTH_TARGET = os.environ["MQ_HEALTH_TARGET"]
+    FILENAME: str = os.environ['HEARTBEAT_FILE']
     INTERVAL: int = int(os.environ['HEARTBEAT_INTERVAL'])
 
 

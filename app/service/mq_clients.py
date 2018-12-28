@@ -97,15 +97,18 @@ class MQConsumer:
 
 class MQConnectionChecker(metaclass=ABCMeta):
 
-    def is_connected(self) -> bool:
-        """Returns a boolea inidcating if the underlying MQ connenction is open.
+    def is_connected(self, health_target: str) -> bool:
+        """Returns a boolean inidcating if the underlying MQ connenction is open.
 
+        :param health_target: MQ target to use for health checking.
         :return: Boolean
         """
         raise NotImplementedError()
 
 
 class MQConnectionFactory(MQConnectionChecker):
+
+    _log = logging.getLogger('MQConnectionFactory')
 
     def __init__(self, config: MQConfig) -> None:
         self.TEST_MODE = config.TEST_MODE
@@ -125,5 +128,12 @@ class MQConnectionFactory(MQConnectionChecker):
     def get_channel(self) -> Channel:
         return self._channel
 
-    def is_connected(self) -> bool:
-        return self._conn.is_open()
+    def is_connected(self, health_target: str) -> bool:
+        if self.TEST_MODE:
+            return True
+        try:
+            self._channel.queue_declare(queue=health_target, passive=True)
+            return True
+        except Exception as e:
+            self._log.error(e)
+            return False
