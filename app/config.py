@@ -19,7 +19,7 @@ class MQConfig:
     _password: str = os.environ['MQ_PASSWORD']
 
     def URI(self) -> str:
-        return f'amqp://{self._user}:{self._password}@{self._host}:{self._port}/'
+        return f"amqp://{self._user}:{self._password}@{self._host}:{self._port}/"
 
 
 class HealthCheckConfig:

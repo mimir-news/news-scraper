@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: news-scraper
-          image: eu.gcr.io/mimir-185212/news-scraper:0.1
+          image: eu.gcr.io/mimir-185212/news-scraper:1.0
           env:
             - name: MQ_EXCHANGE
               value: x-news
@@ -50,3 +50,6 @@ spec:
                 - test
                 - '`find /tmp/news-scraper-health.txt -mmin 1`'
             initialDelaySeconds: 60
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: gcr-json-key
