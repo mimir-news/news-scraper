@@ -42,7 +42,7 @@ class MQClient:
         self._channel.basic_publish(
             exchange=self.CONFIG.EXCHANGE,
             routing_key=self.CONFIG.SCRAPED_QUEUE,
-            body=json.dumps(scraped_article.asdict(), indent=4, sort_keys=True)
+            body=json.dumps(scraped_article.asdict())
         )
 
     def ack(self, channel: Channel, method: MQ.Deliver) -> None:
