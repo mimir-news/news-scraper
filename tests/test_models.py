@@ -40,7 +40,7 @@ def test_article():
         'title': 'a-title',
         'body': 'a-body',
         'keywords': ['k-0', 'k-1'],
-        'articleDate': '2018-11-14 10:10:10'
+        'articleDate': '2018-11-14T10:10:10Z'
     }
     article = Article.fromdict(raw)
     assert article.id == 'a-id'

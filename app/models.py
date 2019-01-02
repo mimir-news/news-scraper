@@ -48,10 +48,10 @@ class Subject(DTO):
             'articleId': self.article_id
         }
 
-    @staticmethod
-    def fromdict(raw: Dict[str, Any]) -> 'Subject':
+    @classmethod
+    def fromdict(cls, raw: Dict[str, Any]) -> 'Subject':
         try:
-            return Subject(
+            return cls(
                 id=raw['id'],
                 symbol=raw['symbol'],
                 name=raw['name'],
@@ -76,10 +76,10 @@ class Referer(DTO):
             'articleId': self.article_id
         }
 
-    @staticmethod
-    def fromdict(raw: Dict[str, Any]) -> 'Referer':
+    @classmethod
+    def fromdict(cls, raw: Dict[str, Any]) -> 'Referer':
         try:
-            return Referer(
+            return cls(
                 id=raw['id'],
                 external_id=raw['externalId'],
                 follower_count=raw['followerCount'],
@@ -114,10 +114,10 @@ class Article(DTO):
             'articleDate': date_to_str(self.date)
         }
 
-    @staticmethod
-    def fromdict(raw: Dict[str, Any]) -> 'Article':
+    @classmethod
+    def fromdict(cls, raw: Dict[str, Any]) -> 'Article':
         try:
-            return Article(
+            return cls(
                 id=raw['id'],
                 url=raw['url'],
                 title=raw['title'],
@@ -171,10 +171,10 @@ class ScrapeTarget:
             'articleId': self.article_id
         }
 
-    @staticmethod
-    def fromdict(raw: Dict[str, Any]) -> 'ScrapeTarget':
+    @classmethod
+    def fromdict(cls, raw: Dict[str, Any]) -> 'ScrapeTarget':
         try:
-            return ScrapeTarget(
+            return cls(
                 url=raw['url'],
                 subjects=[Subject.fromdict(sub) for sub in raw['subjects']],
                 referer=Referer.fromdict(raw['referer']),
@@ -198,10 +198,10 @@ class ScrapedArticle:
             'referer': self.referer.asdict()
         }
 
-    @staticmethod
-    def fromdict(raw: Dict[str, Any]) -> 'ScrapedArticle':
+    @classmethod
+    def fromdict(cls, raw: Dict[str, Any]) -> 'ScrapedArticle':
         try:
-            return ScrapedArticle(
+            return cls(
                 article=Article.fromdict(raw['article']),
                 subjects=[Subject.fromdict(sub) for sub in raw['subjects']],
                 referer=Referer.fromdict(raw['referer']))
