@@ -41,8 +41,6 @@ class Worker(MessageHandler):
 
     def _scrape_and_rank(self, target: ScrapeTarget) -> ScrapedArticle:
         article = self._scraper.get_article(target)
-        self._log.info(article.title)
-        self._log.info(article.body)
         subjects = self._scorer.score(article, target.subjects)
         for sub in subjects:
             self._log.info(f'{sub}')
