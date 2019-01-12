@@ -33,6 +33,8 @@ class Worker(MessageHandler):
                              mq_method: MQ.Deliver) -> None:
         try:
             scraped_article = self._scrape_and_rank(target)
+            self._log.info(
+                f"Scraped and scored article id=[{scraped_article.article.id}]")
             self._mq_client.send(scraped_article)
             self._mq_client.ack(channel, mq_method)
         except Exception as e:
@@ -42,8 +44,6 @@ class Worker(MessageHandler):
     def _scrape_and_rank(self, target: ScrapeTarget) -> ScrapedArticle:
         article = self._scraper.get_article(target)
         subjects = self._scorer.score(article, target.subjects)
-        for sub in subjects:
-            self._log.info(f'{sub}')
         return ScrapedArticle(
             article=article,
             subjects=subjects,

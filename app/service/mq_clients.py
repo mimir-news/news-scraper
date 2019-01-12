@@ -32,7 +32,7 @@ class MessageHandler(metaclass=ABCMeta):
 
 class MQClient:
 
-    _log = logging.getLogger('MQClient')
+    _log = logging.getLogger("MQClient")
 
     def __init__(self, config: MQConfig, channel: Channel) -> None:
         self.CONFIG = config
@@ -56,7 +56,7 @@ class MQClient:
 
 class MQConsumer:
 
-    _log = logging.getLogger('MQConsumer')
+    _log = logging.getLogger("MQConsumer")
 
     def __init__(self,
                  config: MQConfig,
@@ -82,8 +82,7 @@ class MQConsumer:
         try:
             scrape_target = ScrapeTarget.fromdict(json.loads(body))
             self._log.info(
-                f'Handling ScrapeTarget with url={scrape_target.url} '
-                f'article_id={scrape_target.article_id}')
+                f"Incomming ScrapeTarget articleId=[{scrape_target.article_id}]")
             self._executor.submit(
                 self._handler.handle_scrape_target,
                 scrape_target, channel, method)
@@ -108,7 +107,7 @@ class MQConnectionChecker(metaclass=ABCMeta):
 
 class MQConnectionFactory(MQConnectionChecker):
 
-    _log = logging.getLogger('MQConnectionFactory')
+    _log = logging.getLogger("MQConnectionFactory")
 
     def __init__(self, config: MQConfig) -> None:
         self.TEST_MODE = config.TEST_MODE
@@ -116,6 +115,7 @@ class MQConnectionFactory(MQConnectionChecker):
             connection_params = pika.URLParameters(config.URI())
             self._conn = pika.BlockingConnection(connection_params)
             self._channel = self._conn.channel()
+            self._channel.basic_qos(prefetch_count=NUM_WORKERS)
         else:
             self._conn = None
             self._channel = None

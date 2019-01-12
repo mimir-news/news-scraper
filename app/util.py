@@ -16,7 +16,7 @@ def wrap_error_message(error: Exception, id: Optional[str] = None) -> str:
     :param id: Optional id to add to the error.
     :return: JSON formated error string.
     """
-    error_id: str = id or str(uuid4())
+    error_id: str = id or str(uuid4()).lower()
     return json.dumps({
         'id': error_id,
         'message': str(error)
